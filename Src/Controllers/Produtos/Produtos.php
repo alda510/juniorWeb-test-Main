@@ -8,6 +8,37 @@ use backAlda\Resources\Common\Common;
 class Produtos
 {
     private $model;
+    
+    private function trabalharPropriedade(array $propriedades): array
+    {
+        if (count($propriedades) > 1) {
+            foreach ($propriedades as $chave => $valor) {
+                $propriedades[$chave] = $valor/100;
+            }
+            return ['dimensions' => implode('x', $propriedades)];
+        }
+        return [array_key_first($propriedades) => $propriedades[array_key_first($propriedades)]/100];
+    }
+
+    private function cadastrarLivros(array $produto): void
+    {
+        $produto['peso'] = $produto['peso'] * 100;
+        $this->model->cadastrarLivro($produto);
+    }
+
+    private function cadastrarDvds(array $produto): void
+    {
+        $produto['tamanho'] = $produto['tamanho'] * 100;
+        $this->model->cadastrarDvd($produto);
+    }
+
+    private function cadastrarFurniture(array $produto): void
+    {
+        $produto['largura'] = $produto['largura'] * 100;
+        $produto['altura'] = $produto['altura'] * 100;
+        $produto['comprimento'] = $produto['comprimento'] * 100;
+        $this->model->cadastrarFurniture($produto);
+    }
 
     public function __construct()
     {
@@ -20,28 +51,14 @@ class Produtos
         $livros = $this->model->listarLivros();
         $dvds = $this->model->listarDvds();
         $furniture = $this->model->listarFurniture();
+        $propriedades = array_merge($livros, $dvds, $furniture);
         foreach ($produtos as $chave => $valor) {
             $produtos[$chave]['valor'] = $valor['valor']/100;
-            if ($valor['tipo'] === 'livros') {
-                foreach ($livros as $livro) {
-                    if ($livro['sku'] === $valor['sku']) {
-                        $produtos[$chave]['properties']['peso'] = $livro['peso']/100;
-                    }
-                }
-            }
-            if ($valor['tipo'] === 'dvds') {
-                foreach ($dvds as $dvd) {
-                    if ($dvd['sku'] === $valor['sku']) {
-                        $produtos[$chave]['properties']['tamanho'] = $dvd['tamanho']/100;
-                    }
-                }
-            }
-            if ($valor['tipo'] === 'furniture') {
-                foreach ($furniture as $furn) {
-                    if ($furn['sku'] === $valor['sku']) {
-                        $dimensions = $furn['largura']/100 . 'x' . $furn['comprimento']/100 . 'x' . $furn['altura']/100;
-                        $produtos[$chave]['properties']['dimensions'] = $dimensions;
-                    }
+            foreach ($propriedades as $prop) {
+                if ($prop['sku'] === $valor['sku']) {
+                    unset($prop['sku']);
+                    $propriedade =  $this->trabalharPropriedade($prop);
+                    $produtos[$chave]['properties'] = $propriedade;
                 }
             }
         }
@@ -59,27 +76,10 @@ class Produtos
         ];
         unset($parametros['valor']);
         unset($parametros['nome']);
-        unset($parametros['tipo']);
         $this->model->cadastrarProduto($produto);
-        switch ($produto['tipo']) {
-            case 'livros':
-                $parametros['peso'] = $parametros['peso'] * 100;
-                $this->model->cadastrarLivro($parametros);
-                break;
-            case 'dvds':
-                $parametros['tamanho'] = $parametros['tamanho'] * 100;
-                $this->model->cadastrarDvd($parametros);
-                break;
-            case 'furniture':
-                    $parametros['largura'] = $parametros['largura'] * 100;
-                    $parametros['altura'] = $parametros['altura'] * 100;
-                    $parametros['comprimento'] = $parametros['comprimento'] * 100;
-                    $this->model->cadastrarFurniture($parametros);
-                break;
-            default:
-                return Common::prepararRetorno(500, 'Tipo não suportado');
-                break;
-        }
+        $metodo = 'cadastrar' . ucfirst($parametros['tipo']);
+        unset($parametros['tipo']);
+        $this->$metodo($parametros);
         return Common::prepararRetorno(200, 'Sucesso');
     }
     
