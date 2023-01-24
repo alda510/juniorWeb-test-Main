@@ -1,0 +1,5 @@
+RewriteEngine on
+
+RewriteRule ^.*$ index.php?url=$0
+
+Options -Indexes

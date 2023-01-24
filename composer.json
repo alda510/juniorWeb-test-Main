@@ -1,0 +1,14 @@
+{
+    "name": "projeto/back-alda",
+    "require": {
+        "php": "8.1.12"
+    },
+    "autoload": {
+        "psr-4": {
+            "backAlda\\Src\\": "Src/",
+            "backAlda\\config\\": "config/",
+            "backAlda\\publicHtml\\": "publicHtml/",
+            "backAlda\\Resources\\": "Resources/"
+        }
+    }
+}
