@@ -11,6 +11,8 @@ const AddProduct = () => {
     const [largura, setLargura] = useState("");
     const [comprimento, setComprimento] = useState("");
     const [productType, setProductType] = useState("0");
+    const endPoint = 'https://juniorweb-test-main-production.up.railway.app/scandiweb/';
+    
     async function addProduct() {
         const product = {
             sku, nome, "valor":value, "tipo": productType
@@ -31,7 +33,7 @@ const AddProduct = () => {
             default:
                 break;
         }
-        axios.post("http://localhost/scandiweb/juniorTestGustavoAlda/produtos/cadastrar",product).then(
+        axios.post(endPoint + "juniorTestGustavoAlda/produtos/cadastrar",product).then(
             ()=>{
                 window.location.href="/"
             }

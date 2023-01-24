@@ -16,6 +16,8 @@ const ProductList = () => {
     console.log(skuList)
   }
 
+  const endPoint = 'https://juniorweb-test-main-production.up.railway.app/scandiweb/';
+
   async function massDelete(list) {
     const formatedList = {
       "parametros": list.map((item) => {
@@ -25,16 +27,16 @@ const ProductList = () => {
       })
     }
     try {
-      await axios.delete("http://localhost/scandiweb/juniorTestGustavoAlda/produtos/deletar", { headers: {}, data: formatedList });
+      await axios.delete(endPoint + "juniorTestGustavoAlda/produtos/deletar", { headers: {}, data: formatedList });
       getData()
     } catch (error) { console.log(error) }
   }
   async function getData() {
     setList(
-      (await axios.get("http://localhost/scandiweb/juniorTestGustavoAlda/produtos",
+      (await axios.get(endPoint + "juniorTestGustavoAlda/produtos",
         {
           headers: {
-            "Access-Control-Allow-Origin": 'http://localhost:3000/',
+            "Access-Control-Allow-Origin": 'https://juniorweb-test-main-production.up.railway.app/',
           }
         }))
         .data.content.content)
