@@ -1,2 +1,2 @@
-# juniorWeb-test-Main
-Work In Progress
+# Scandiweb Junior Web Dev Page
+
