@@ -10,6 +10,6 @@ class Model
 
     public function __construct()
     {
-        $this->conexaoPdo = new PDO('mysql:host=localhost;dbname=mvc', 'root', '');
+        $this->conexaoPdo = new PDO('mysql://root:uDxjAgAHR0ra02yG4BdK@containers-us-west-73.railway.app:7230/railway;dbname=mvc', 'root', '');
     }
 }
